@@ -7,7 +7,8 @@ const {formatDate, generateDateList, constructDocument} = require("../util")
 const baseUrl = 'https://api.openweathermap.org/data/3.0/onecall/day_summary';
 const apikey = "945b1d705786f6cd9f5841bce40a3ddd"
 
-async function weather_service(req,res){
+// checks for inputs in the query and returns the fetched results from database
+async function weather_service(req){
     const city = req.query.city;
     const resObj = {};
     if(!city){
@@ -17,12 +18,13 @@ async function weather_service(req,res){
     }
     const locations = await location.find({});
     const city_list = locations.map(data => data['city']);
+    // checks if city is in the database
     if(city_list.indexOf(city)==-1){
         resObj.statusCode = 400;
         resObj.message = 'Only 4 cities allowed: New York, New Delhi, Istanbul, Paris';
         return resObj;
     }
-    //console.log(city_list)
+
     let unit = req.query.unit;
     if(!unit){
         unit = 'C'
@@ -65,11 +67,10 @@ async function weather_service(req,res){
     const today = new Date();
     const date_range = generateDateList(formatDate(today),prev,next);
     const dataList = [];
+    //makes output list
     for(let i = 0; i < date_range.length; i++){
-      //console.log(unit)
       const data = await weather.findOne({city:city, units:unit, date:date_range[i]});
       if(data){
-        //console.log(data)
         dataList.push(data);
       }
     }
@@ -80,6 +81,8 @@ async function weather_service(req,res){
     }
 }
 
+
+//this functions loads data into database if data for +/-7 days from today is not present 
 async function initial_data_load(){
     try{
         const cities = await location.find({});

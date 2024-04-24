@@ -11,6 +11,10 @@ cd ./backend
 npm install
 nodemon ./index.js
 ```
+If you face issues with nodemon, you can try  
+```bash
+sudo npm install -g --force nodemon
+```
 
 ### Unit tests
 
@@ -25,6 +29,7 @@ Once the backend is running, you can go to any browser or Postman/Thunderclient 
 The program is designed keeping in mind that the frontend will be at localhost:3000  
 Since, we only want to check the weather for +/-7 days, when we go to localhost:3000, it checks if we already have data for these days in our database. If not, it fetches the data from openweather.org and puts it into the database. If we already have +/-7 days of data, we don't fetch anything from the openweather.org  
 This is done so that, by the time client inputs the data he/she wants, we already have the data in our database  
+Although, SQL would have been a better database for this problem, I have used MongoDB, because it can easily be integrated with Node using mongoose (same language Javascript)  
 
 ### API Usage
 

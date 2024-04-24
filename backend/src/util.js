@@ -1,3 +1,4 @@
+// generates list of dates from prev to next number of days from today
 function generateDateList(startDate, prev, next){
     const dateList = [];
     const currentDate = new Date(startDate);
@@ -27,6 +28,7 @@ function formatDate(date) {
     return `${year}-${month}-${day}`;
 }
 
+// constructs document in the format to be inserted in MongoDB
 function constructDocument(data) {
     const document = {};
     
