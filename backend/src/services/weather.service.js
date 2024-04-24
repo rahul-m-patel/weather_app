@@ -7,20 +7,30 @@ const {formatDate, generateDateList, constructDocument} = require("../util")
 const baseUrl = 'https://api.openweathermap.org/data/3.0/onecall/day_summary';
 const apikey = "945b1d705786f6cd9f5841bce40a3ddd"
 
-async function weather_service(req){
+async function weather_service(req,res){
     const city = req.query.city;
+    const resObj = {};
     if(!city){
-        return res.status(400).send('City parameter is required');
+        resObj.statusCode = 400;
+        resObj.message = 'City parameter is required';
+        return resObj;
     }
     const locations = await location.find({});
     const city_list = locations.map(data => data['city']);
     if(city_list.indexOf(city)==-1){
-        return res.status(400).send('Only 4 cities allowed: New York, New Delhi, Istanbul, Paris');
+        resObj.statusCode = 400;
+        resObj.message = 'Only 4 cities allowed: New York, New Delhi, Istanbul, Paris';
+        return resObj;
     }
     //console.log(city_list)
     let unit = req.query.unit;
+    if(!unit){
+        unit = 'C'
+    }
     if(unit!='C' && unit!='F'){
-        return res.status(400).send('unit should either be C or F');
+        resObj.statusCode = 400;
+        resObj.message = 'Unit should either be C or F';
+        return resObj;
     }
     else{
       if(unit=='C'){
@@ -32,16 +42,22 @@ async function weather_service(req){
     }
     let prev = req.query.prev;
     if(prev){
-      if(prev<0 || prev>7)
-        return res.status(400).send('Previous number of days should be >=0 and <=7');
+      if(prev<0 || prev>7){
+        resObj.statusCode = 400;
+        resObj.message = 'Previous number of days should be >=0 and <=7';
+        return resObj;
+      }
     }
     else{
       prev = 0;
     }
     let next = req.query.next;
     if(next){
-      if(next<0 || next>7)
-        return res.status(400).send('Next number of days should be >=0 and <=7');
+      if(next<0 || next>7){
+        resObj.statusCode = 400;
+        resObj.message = 'Next number of days should be >=0 and <=7';
+        return resObj;
+      }
     }
     else{
       next = 0;
@@ -57,7 +73,11 @@ async function weather_service(req){
         dataList.push(data);
       }
     }
-    return dataList;
+    if(dataList.length>0){
+        resObj.statusCode = 200;
+        resObj.message = dataList;
+        return resObj;
+    }
 }
 
 async function initial_data_load(){

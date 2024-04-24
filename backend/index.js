@@ -13,8 +13,9 @@ app.get('/', (req, res) => {
 
 app.get('/api/weather', async (req, res) => {
   try{
-    const dataList = await weather_service(req);
-    res.json(dataList)
+    const resobj = await weather_service(req,res);
+    res.status(resobj.statusCode).send(resobj.message)
+    //res.json(dataList)
   }
   catch(error){
     res.status(400).send(error)
